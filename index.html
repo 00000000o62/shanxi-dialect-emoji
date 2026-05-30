@@ -520,7 +520,8 @@
             padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
             box-sizing: border-box;
         }
-        #share-container.visible { display: flex; }
+        #share-container.visible { display: flex; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
         #share-image {
             max-width: 85%;
             max-height: 70vh;
@@ -682,9 +683,10 @@
 
     <!-- 分享图弹窗 -->
     <div id="share-container">
-        <div class="close-share" id="close-share">×</div>
-        <img id="share-image" src="" alt="证书">
-        <div class="share-tip">👆 长按保存图片</div>
+        <div class="close-share" id="close-share">✕</div>
+        <img id="share-image" src="" alt="证书" crossorigin="anonymous">
+        <div class="share-tip">👆 长按图片保存</div>
+        <button class="btn" id="btn-download" style="margin-top:12px;padding:10px 30px;font-size:16px;">💾 保存到相册</button>
     </div>
 
     <script>
@@ -1070,6 +1072,7 @@ const q = questions[currentQuestion];
         document.getElementById('btn-share').addEventListener('click', generateShareCard);
         document.getElementById('btn-audio').addEventListener('click', playCurrentAudio);
         document.getElementById('close-share').addEventListener('click', closeShare);
+        document.getElementById('btn-download').addEventListener('click', downloadImage);
 
         // === 全局错误兜底 ===
         window.addEventListener('error', function(e) {
@@ -1308,6 +1311,17 @@ const q = questions[currentQuestion];
 
         function closeShare() {
             document.getElementById('share-container').classList.remove('visible');
+        }
+
+        function downloadImage() {
+            const img = document.getElementById('share-image');
+            if (!img.src || img.src === window.location.href) return;
+            const a = document.createElement('a');
+            a.href = img.src;
+            a.download = '你是正宗山西人吗-证书.png';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
 
         // Canvas roundRect polyfill for older browsers
