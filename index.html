@@ -91,52 +91,13 @@
             letter-spacing: 2px;
         }
         #screen-start p {
-            font-family: var(--font-body);
-            font-size: 16px;
+            font-family: var(--font-display);
+            font-size: 18px;
             color: var(--text-light);
             text-align: center;
             margin: 0 0 40px 0;
             line-height: 1.8;
-        }
-        .history-panel {
-            width: 100%;
-            margin-top: 18px;
-        }
-        .history-toggle {
-            font-family: var(--font-display);
-            font-size: 16px;
-            color: var(--wood);
-            text-align: center;
-            padding: 8px;
-            cursor: pointer;
-            border-top: 1px solid rgba(139,115,85,0.2);
-        }
-        .history-toggle:hover { color: var(--primary); }
-        .history-list {
-            width: 100%;
-            background: rgba(253,245,230,0.6);
-            border-radius: 4px;
-            padding: 8px 12px;
-            box-sizing: border-box;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 6px 0;
-            border-bottom: 1px solid rgba(139,115,85,0.1);
-            font-family: var(--font-body);
-            font-size: 14px;
-            color: var(--text-main);
-        }
-        .history-item:last-child { border-bottom: none; }
-        .history-empty {
-            text-align: center;
-            color: var(--text-light);
-            font-size: 13px;
-            padding: 12px 0;
+            letter-spacing: 1px;
         }
 
         .btn {
@@ -655,12 +616,6 @@
             <h1>🏮<br>山西方言大挑战<br>🏮</h1>
             <p>看方言，选 Emoji<br>你是正宗老醯儿吗？</p>
             <button class="btn" id="btn-start">开始挑战</button>
-            <div class="history-panel" id="history-panel">
-                <div class="history-toggle" id="history-toggle">\n                    <span id="history-arrow">▶</span> 📋 历史记录
-                    <span id="history-arrow">▶</span> 📋 历史记录
-                </div>
-                <div class="history-list" id="history-list" style="display:none;"></div>
-            </div>
         </div>
 
         <!-- 2. 答题界面 -->
@@ -1104,57 +1059,10 @@ const q = questions[currentQuestion];
                     localStorage.setItem('shanxiEmojiBestScore', score);
                 }
                 // 保存历史记录
-                saveRecord(score);
             } catch(e) {
                 // localStorage not available
             }
         }
-
-        function saveRecord(score) {
-            try {
-                let records = JSON.parse(localStorage.getItem('shanxiEmojiHistory') || '[]');
-                const now = new Date();
-                const date = `${now.getMonth()+1}/${now.getDate()}`;
-                records.push({ score, date });
-                records.sort((a, b) => b.score - a.score);
-                if (records.length > 20) records = records.slice(0, 20);
-                localStorage.setItem('shanxiEmojiHistory', JSON.stringify(records));
-            } catch(e) {}
-        }
-
-        function toggleHistory() {
-            const list = document.getElementById('history-list');
-            const arrow = document.getElementById('history-arrow');
-            if (list.style.display === 'none') {
-                list.style.display = 'block';
-                arrow.innerText = '▼';
-                renderHistory();
-            } else {
-                list.style.display = 'none';
-                arrow.innerText = '▶';
-            }
-        }
-
-        function renderHistory() {
-            const list = document.getElementById('history-list');
-            try {
-                const records = JSON.parse(localStorage.getItem('shanxiEmojiHistory') || '[]');
-                if (records.length === 0) {
-                    list.innerHTML = '<div class="history-empty">暂无记录，快来挑战吧！</div>';
-                    return;
-                }
-                const medals = ['🥇', '🥈', '🥉'];
-                list.innerHTML = records.map((r, i) => {
-                    const medal = i < 3 ? medals[i] + ' ' : '';
-                    return `<div class="history-item"><span>${medal}${r.score}/10</span><span>${r.date}</span></div>`;
-                }).join('');
-            } catch(e) {
-                list.innerHTML = '<div class="history-empty">暂无记录</div>';
-            }
-        }
-
-        // 页面加载时渲染
-        renderHistory();
 
         // === 事件绑定 ===
         document.getElementById('btn-start').addEventListener('click', startGame);
@@ -1162,7 +1070,6 @@ const q = questions[currentQuestion];
         document.getElementById('btn-share').addEventListener('click', generateShareCard);
         document.getElementById('btn-audio').addEventListener('click', playCurrentAudio);
         document.getElementById('close-share').addEventListener('click', closeShare);
-        document.getElementById('history-toggle').addEventListener('click', toggleHistory);
 
         // === 全局错误兜底 ===
         window.addEventListener('error', function(e) {
